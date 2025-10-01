@@ -12,11 +12,31 @@ function deriveActivePlayer(gameTurns) {
   return currentPlayer;
 }
 
+const initialGameBoard = [
+  [null, null, null],
+  [null, null, null],
+  [null, null, null],
+];
+
 function App() {
   // const [currentPlayer, setCurrentPlayer] = useState("X");
   const [gameTurns, setGameTurns] = useState([]);
 
   const activePlayer = deriveActivePlayer(gameTurns);
+
+  let gameBoard = initialGameBoard.map((row) => [...row]);
+
+  for (const turn of gameTurns) {
+    const { square, player } = turn;
+    const { row, col } = square;
+    gameBoard[row][col] = player;
+  }
+
+  for (const combination of WINNING_COMBINATIONS) {
+    const firstSquareSymbol = 0;
+    const secondSquareSymbol = 1;
+    const thirdSquareSymbol = 2;
+  }
 
   function togglePlayer(rowIndex, colIndex) {
     setGameTurns((previousGameTurns) => {
@@ -50,7 +70,7 @@ function App() {
             isActive={activePlayer === "O"}
           />
         </ol>
-        <GameBoard togglePlayer={togglePlayer} turns={gameTurns} />
+        <GameBoard togglePlayer={togglePlayer} board={gameBoard} />
       </div>
       <Log turns={gameTurns} />
     </main>
