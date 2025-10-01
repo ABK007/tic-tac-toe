@@ -3,6 +3,7 @@ import GameBoard from "./components/GameBoard.jsx";
 import { useState } from "react";
 import Log from "./components/log.jsx";
 import { WINNING_COMBINATIONS } from "./winning-combinations.js";
+import GameOver from "./components/GameOver.jsx";
 
 function deriveActivePlayer(gameTurns) {
   let currentPlayer = "X";
@@ -23,6 +24,7 @@ function App() {
   const [gameTurns, setGameTurns] = useState([]);
 
   const activePlayer = deriveActivePlayer(gameTurns);
+  let winner = null;
 
   let gameBoard = initialGameBoard.map((row) => [...row]);
 
@@ -33,10 +35,19 @@ function App() {
   }
 
   for (const combination of WINNING_COMBINATIONS) {
-    const firstSquareSymbol = 0;
-    const secondSquareSymbol = 1;
-    const thirdSquareSymbol = 2;
+    const firstSquareSymbol = gameBoard[combination[0].row][combination[0].col];
+    const secondSquareSymbol =
+      gameBoard[combination[1].row][combination[1].col];
+    const thirdSquareSymbol = gameBoard[combination[2].row][combination[2].col];
+    if (
+      firstSquareSymbol &&
+      firstSquareSymbol === secondSquareSymbol &&
+      firstSquareSymbol === thirdSquareSymbol
+    ) {
+      winner = firstSquareSymbol;
+    }
   }
+  const hasDraw = gameTurns.length === 9 && !winner;
 
   function togglePlayer(rowIndex, colIndex) {
     setGameTurns((previousGameTurns) => {
@@ -70,6 +81,7 @@ function App() {
             isActive={activePlayer === "O"}
           />
         </ol>
+        {(winner || hasDraw) && <GameOver winner= {winner} />}
         <GameBoard togglePlayer={togglePlayer} board={gameBoard} />
       </div>
       <Log turns={gameTurns} />
